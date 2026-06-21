@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <!-- <div class="p-4 mb-4 text-white rounded-3 bg-green shadow-sm">
+        <h2 class="fw-bold m-0">Explore Your Next Adventure, {{ session.get('username') }}! </h2>
+    </div> -->
+
+    <div class="card p-3 border-0 shadow-sm mb-4" style="border-radius: 15px; background: rgba(240, 245, 241, 0.95);">
+        <form action="/dashboard" method="GET" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small fw-bold text-muted mb-1">Filter by Location</label>
+                <input type="text" name="location" class="form-control py-1" placeholder="e.g. Uttarakhand, Himalayas..." value="{{ selected_location }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Difficulty Tier</label>
+                <select name="difficulty" class="form-select form-control py-1">
+                    <option value="">-- All Difficulty Levels --</option>
+                    <option value="Easy" {% if selected_difficulty=='Easy' %}selected{% endif %}>Easy</option>
+                    <option value="Moderate" {% if selected_difficulty=='Moderate' %}selected{% endif %}>Moderate</option>
+                    <option value="Hard" {% if selected_difficulty=='Hard' %}selected{% endif %}>Hard</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-green w-100 fw-bold py-2 rounded-3 shadow-sm">Apply Filters</button>
+                {% if selected_location or selected_difficulty %}
+                    <a href="/dashboard" class="btn btn-secondary py-2 rounded-3">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card p-4 border-0 shadow-sm h-100" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+                <h3 class="text-green fw-bold mb-3">Open Trekking Catalogs</h3>
+                
+                <div class="row g-3">
+{% for t in treks %}
+<div class="col-12">
+    <div class="card border-0 shadow-sm bg-white overflow-hidden mb-3" style="border-radius: 15px;">
+        <div class="row g-0 align-items-center">
+            
+            <div class="col-sm-4 position-relative" style="height: 160px; overflow: hidden; background-color: #dfdfdf;">
+                {% if 'himachal' in t.location.lower() or 'triund' in t.name.lower() or 'tundabhuj' in t.name.lower() %}
+                    <img src="https://picsum.photos/id/1015/600/400" alt="Mountain View" style="width: 100%; height: 100%; object-fit: cover;">
+                {% elif 'uttarakhand' in t.location.lower() or 'kedarkantha' in t.name.lower() %}
+                    <img src="https://picsum.photos/id/1016/600/400" alt="Valley View" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <img src="https://picsum.photos/id/1043/600/400" alt="Forest View" style="width: 100%; height: 100%; object-fit: cover;">
+                {% endif %}
+                
+                <span class="position-absolute top-0 start-0 m-2 badge {% if t.difficulty=='Easy' %}bg-success{% elif t.difficulty=='Moderate' %}bg-warning text-dark{% else %}bg-danger{% endif %} shadow-sm">
+                    {{ t.difficulty }}
+                </span>
+            </div>
+
+            <div class="col-sm-8 p-3">
+                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                    <div>
+                        <h4 class="fw-bold text-dark m-0">{{ t.name }}</h4>
+                        <p class="text-muted small my-1">📍 <span class="fw-semibold text-secondary">{{ t.location }}</span> | 🗓️ {{ t.duration }} Days</p>
+                        <p class="small text-muted mb-0" style="font-size: 0.85rem;">Timeline: {{ t.start_date.strftime('%d %b') }} to {{ t.end_date.strftime('%d %b %Y') }}</p>
+                    </div>
+                    <div class="mt-2 mt-sm-0 text-end">
+                        <span class="d-block text-secondary small fw-bold mb-1">Slots Left: <span class="text-green fw-bold" style="font-size: 1.1rem;">{{ t.available_slots }}</span></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center mt-3 pt-2 border-top">
+                    {% if t.available_slots > 0 %}
+                        <form action="/book_trek/{{ t.id }}" method="POST" class="m-0">
+                            <button type="submit" class="btn btn-green px-4 rounded-pill fw-bold btn-sm shadow-sm">Book Ticket</button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-secondary btn-sm px-4 rounded-pill disabled" disabled>Sold Out</button>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card p-4 border-0 shadow-sm h-100" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+                <h3 class="text-green fw-bold mb-3">Your Bookings</h3>
+                
+                <div class="row g-2">
+                    {% for b in bookings %}
+                    <div class="col-12">
+                        <div class="card p-3 border-0 shadow-sm bg-white" style="border-radius: 12px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="fw-bold m-0 text-dark">{{ b.trek_details.name }}</h6>
+                                    <small class="text-muted">Date: {{ b.booking_date.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge mb-2 d-block {% if b.status=='Booked' %}bg-success{% elif b.status=='Cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                        {{ b.status|upper }}
+                                    </span>
+                                    {% if b.status == 'Booked' and b.trek_details.status == 'Open' %}
+                                        <form action="/cancel_booking/{{ b.id }}" method="POST" style="display: inline;">
+                                            <button type="submit" class="btn btn-link text-danger p-0 small fw-bold text-decoration-none" style="font-size:0.8rem;">Cancel Journey</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col-12">
+                        <div class="text-center p-5 text-muted bg-white rounded-3 shadow-sm">
+                            <p class="small m-0 text-secondary">No bookings found. </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

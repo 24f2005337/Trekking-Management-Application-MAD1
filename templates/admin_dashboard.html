@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card p-3 text-center border-0 shadow-sm" style="border-radius: 15px; background: rgba(255,255,255,0.95);">
+                <h5 class="text-muted small text-uppercase fw-bold">Total Treks</h5>
+                <h2 class="text-green fw-bold m-0">{{ total_treks }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center border-0 shadow-sm" style="border-radius: 15px; background: rgba(255,255,255,0.95);">
+                <h5 class="text-muted small text-uppercase fw-bold">Active Trekkers</h5>
+                <h2 class="text-green fw-bold m-0">{{ total_users }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center border-0 shadow-sm" style="border-radius: 15px; background: rgba(255,255,255,0.95);">
+                <h5 class="text-muted small text-uppercase fw-bold">Trek Guides</h5>
+                <h2 class="text-green fw-bold m-0">{{ total_staff }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center border-0 shadow-sm" style="border-radius: 15px; background: rgba(255,255,255,0.95);">
+                <h5 class="text-muted small text-uppercase fw-bold">Total Bookings</h5>
+                <h2 class="text-green fw-bold m-0">{{ total_bookings }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-7">
+            <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+                <h3 class="text-green fw-bold mb-3">Create New Trek Route</h3>
+                <form action="/admin/create_trek" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Trek Name</label>
+                            <input type="text" class="form-control" name="name" required placeholder="e.g. Roopkund Trail">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Location</label>
+                            <input type="text" class="form-control" name="location" required placeholder="e.g. Himalayas">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Difficulty</label>
+                            <select class="form-select form-control" name="difficulty">
+                                <option value="Easy">Easy</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Duration (Days)</label>
+                            <input type="number" class="form-control" name="duration" min="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Total Slots</label>
+                            <input type="number" class="form-control" name="slots" min="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">End Date</label>
+                            <input type="date" class="form-control" name="end_date" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">Assign Trek Guide</label>
+                            <select class="form-select form-control" name="staff_id">
+                                <option value="">-- Keep Unassigned --</option>
+                                {% for s in staff_profiles %}
+                                    <option value="{{ s.id }}">{{ s.user_identity.username }} (Contact: {{ s.contact_details }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-green mt-3 w-100 rounded-pill fw-bold py-2 shadow-sm">Launch Trek Event</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95); min-height: 100%;">
+                <h3 class="text-green fw-bold mb-3">Onboard Trek Staff</h3>
+                <form action="/admin/add_staff" method="POST">
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Staff Username</label>
+                        <input type="text" class="form-control" name="username" required placeholder="e.g. guide_rahul">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Email Address</label>
+                        <input type="email" class="form-control" name="email" required placeholder="rahul@trekking.com">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Contact Number</label>
+                        <input type="text" class="form-control" name="contact" required placeholder="Contact info">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Temporary Password</label>
+                        <input type="password" class="form-control" name="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-green w-100 rounded-pill fw-bold py-2 shadow-sm">Register Staff User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="treks-section" class="card p-4 border-0 shadow-sm mb-5" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <h3 class="text-green fw-bold m-0">Trekking Routes Management</h3>
+            <form action="/admin/dashboard#treks-section" method="GET" class="d-flex mt-2 mt-md-0">
+                <input type="text" name="search_trek" class="form-control me-2" placeholder="Search Trek by Name/ID..." value="{{ search_trek }}">
+                <button type="submit" class="btn btn-green rounded-3 px-3">Search</button>
+                {% if search_trek %}
+                    <a href="/admin/dashboard#treks-section" class="btn btn-secondary ms-2 rounded-3">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm m-0">
+                <thead class="bg-green text-white">
+                    <tr>
+                        <th class="p-3">ID</th>
+                        <th>Trek Name</th>
+                        <th>Location</th>
+                        <th>Difficulty</th>
+                        <th>Duration</th>
+                        <th>Available Slots</th>
+                        <th>Assigned Guide</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in treks %}
+                    <tr>
+                        <td class="p-3 fw-bold text-muted">#{{ t.id }}</td>
+                        <td class="fw-bold">{{ t.name }}</td>
+                        <td>{{ t.location }}</td>
+                        <td><span class="badge {% if t.difficulty=='Easy' %}bg-success{% elif t.difficulty=='Moderate' %}bg-warning text-dark{% else %}bg-danger{% endif %}">{{ t.difficulty }}</span></td>
+                        <td>{{ t.duration }} Days</td>
+                        <td class="fw-bold text-green">{{ t.available_slots }}</td>
+                        <td>
+                            {% if t.staff_id %}
+                                <span class="fw-semibold">{{ t.assigned_staff.user_identity.username }}</span>
+                            {% else %}
+                                <span class="text-muted fst-italic small">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-primary">{{ t.status }}</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/admin/edit_trek/{{ t.id }}" class="btn btn-sm btn-outline-warning fw-bold px-2 py-0" style="font-size: 0.8rem;">Edit</a>
+                                <form action="/admin/delete_trek/{{ t.id }}" method="POST" onsubmit="return confirm('Do you really want to remove this trek route? All linked bookings will be canceled!');" style="display:inline; margin:0;">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-2 py-0" style="font-size: 0.8rem;">Remove</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center p-4 text-muted">No matching trekking tracks found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="users-section" class="card p-4 border-0 shadow-sm mb-5" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <h3 class="text-green fw-bold m-0">Users & Staff Access Control</h3>
+            <form action="/admin/dashboard#users-section" method="GET" class="d-flex mt-2 mt-md-0">
+                <input type="text" name="search_user" class="form-control me-2" placeholder="Search User by Name/ID..." value="{{ search_user }}">
+                <button type="submit" class="btn btn-green rounded-3 px-3">Search</button>
+                {% if search_user %}
+                    <a href="/admin/dashboard#users-section" class="btn btn-secondary ms-2 rounded-3">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm m-0">
+                <thead class="bg-green text-white">
+                    <tr>
+                        <th class="p-3">ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>System Role</th>
+                        <th>Access Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td class="p-3 text-muted fw-bold">#{{ u.id }}</td>
+                        <td class="fw-bold">{{ u.username }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="badge {% if u.role=='staff' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                {{ u.role|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if u.is_blacklisted %}
+                                <span class="badge bg-danger">BLACKLISTED</span>
+                            {% else %}
+                                <span class="badge bg-success">ACTIVE</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="/admin/toggle_blacklist/{{ u.id }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-sm {% if u.is_blacklisted %}btn-outline-success{% else %}btn-outline-danger{% endif %} px-3 fw-bold rounded-pill">
+                                    {% if u.is_blacklisted %}Activate{% else %}Blacklist{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center p-4 text-muted">No system user matched the search criteria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+        <h3 class="text-green fw-bold mb-3"> Trekking History Registry</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm m-0">
+                <thead class="bg-green text-white">
+                    <tr>
+                        <th class="p-3">Booking ID</th>
+                        <th>Trek Name</th>
+                        <th>Trekker (User)</th>
+                        <th>Booking Date</th>
+                        <th>Current Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in all_bookings %}
+                    <tr>
+                        <td class="p-3 fw-bold text-muted">#{{ b.id }}</td>
+                        <td class="fw-semibold text-dark">{{ b.trek_details.name }}</td>
+                        <td>{{ b.trekker.username }} (ID: {{ b.user_id }})</td>
+                        <td>{{ b.booking_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <span class="badge {% if b.status=='Booked' %}bg-success{% elif b.status=='Cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                {{ b.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center p-4 text-muted">No booking history found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main-card-body">
+    <h1 class="text-green fw-bold mb-4">Login Form</h1>
+    
+    <form action="{{ url_for('login') }}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label fw-bold text-muted">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required autocomplete="off">
+        </div>
+        
+        <div class="mb-4">
+            <label for="password" class="form-label fw-bold text-muted">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="text-center my-3">
+            <input type="submit" class="btn btn-green my-3 px-5 py-2 fw-bold rounded-pill shadow-sm" value="Login"><br>
+            Are you a new trekker? <a href="{{ url_for('register') }}" class="text-green fw-bold text-decoration-none">Register here</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

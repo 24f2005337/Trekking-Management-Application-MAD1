@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5" style="max-width: 800px;">
+    
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <a href="/staff/dashboard" class="text-white fw-bold text-decoration-none">← Back to Staff Base</a>
+    </div>
+
+    <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+        <div class="mb-3">
+            <h2 class="text-green fw-bold m-0">{{ trek.name }}</h2>
+            <p class="text-muted m-0"> Current Remaining Slots: <strong>{{ trek.available_slots }}</strong></p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm m-0">
+                <thead class="bg-green text-white">
+                    <tr>
+                        <th class="p-3">Trekker ID</th>
+                        <th>Username</th>
+                        <th>Email Contacts</th>
+                        <th>Booking Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                        <td class="p-3 fw-bold text-muted">#{{ b.user_id }}</td>
+                        <td class="fw-bold text-dark">{{ b.trekker.username }}</td>
+                        <td>{{ b.trekker.email }}</td>
+                        <td class="small text-secondary">{{ b.booking_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center p-5 text-muted">No participants booked for this trek yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <div class="p-4 mb-4 text-white rounded-3 bg-green shadow-sm d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h2 class="fw-bold m-0">Guide Dashboard: {{ session.get('username') }} </h2>
+            <p class="m-0 text-light opacity-75 small mt-1">Contact Registered: {{ profile.contact_details }} | Profile Status: {{ profile.status }}</p>
+        </div>
+        <div class="bg-white text-green px-3 py-2 fw-bold rounded-pill shadow-sm">
+            Total Assigned Treks: {{ treks|length }}
+        </div>
+    </div>
+
+    <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95);">
+        <h3 class="text-green fw-bold mb-4">Your Assigned Trekking Base</h3>
+        
+        <div class="row g-4">
+            {% for t in treks %}
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3 bg-white" style="border-radius: 15px;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-1">{{ t.name }}</h4>
+                            <p class="text-muted small mb-2">📍 {{ t.location }} | 🗓️ {{ t.duration }} Days</p>
+                            <p class="text-secondary small">Timeline: <strong>{{ t.start_date }}</strong> to <strong>{{ t.end_date }}</strong></p>
+                        </div>
+                        <span class="badge {% if t.status=='Open' %}bg-success{% elif t.status=='Closed' %}bg-danger{% else %}bg-secondary{% endif %} p-2">
+                            {{ t.status|upper }}
+                        </span>
+                    </div>
+                    
+                    <hr class="my-2">
+                    
+                    <form action="/staff/update_trek/{{ t.id }}" method="POST" class="row g-2 align-items-end">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted m-0">Available Slots</label>
+                            <input type="number" name="slots" class="form-control py-1" value="{{ t.available_slots }}" min="0" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted m-0">Trek Status</label>
+                            <select name="status" class="form-select form-control py-1">
+                                <option value="Approved" {% if t.status=='Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Open" {% if t.status=='Open' %}selected{% endif %}>Open (Allow Bookings)</option>
+                                <option value="Closed" {% if t.status=='Closed' %}selected{% endif %}>Closed</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mt-3 d-flex justify-content-between">
+                            <a href="/staff/trek/{{ t.id }}/participants" class="btn btn-outline-success fw-bold btn-sm rounded-pill px-3">
+                                 View Trekkers List
+                            </a>
+                            <button type="submit" class="btn btn-green btn-sm fw-bold rounded-pill px-4 shadow-sm">
+                                Save Live Updates
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="text-center p-5 text-muted bg-white rounded-3 shadow-sm">
+                    <h5>no trek routes assigned. </h5>
+                    <p class="small m-0 text-secondary">as soon as admin assigns routes, they will appear here.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

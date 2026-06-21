@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main-card-body" style="min-height: 480px;">
+    <h1 class="text-green fw-bold mb-4">Registration</h1>
+    
+    <form action="{{ url_for('register') }}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label fw-bold text-muted">Choose Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="e.g. trekker_shivani" required autocomplete="off">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label fw-bold text-muted">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required autocomplete="off">
+        </div>
+        
+        <div class="mb-4">
+            <label for="password" class="form-label fw-bold text-muted">Create Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <div class="text-center my-3">
+            <input type="submit" class="btn btn-green my-3 px-5 py-2 fw-bold rounded-pill shadow-sm" value="Register"><br>
+            Already have an account? <a href="{{ url_for('login') }}" class="text-green fw-bold text-decoration-none">Login here</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
