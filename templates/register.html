@@ -6,6 +6,14 @@
     
     <form action="{{ url_for('register') }}" method="post">
         <div class="mb-3">
+            <label for="role" class="form-label fw-bold text-muted">Register As</label>
+            <select class="form-select form-control" id="role" name="role" onchange="toggleStaffFields()" required>
+                <option value="user" selected>Trekker (User)</option>
+                <option value="staff">Trek Staff / Guide</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
             <label for="username" class="form-label fw-bold text-muted">Choose Username</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="e.g. trekker_shivani" required autocomplete="off">
         </div>
@@ -13,6 +21,11 @@
         <div class="mb-3">
             <label for="email" class="form-label fw-bold text-muted">Email Address</label>
             <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required autocomplete="off">
+        </div>
+        
+        <div class="mb-3 d-none" id="staff-contact-div">
+            <label for="contact" class="form-label fw-bold text-muted">Contact Number</label>
+            <input type="text" class="form-control" id="contact" name="contact" placeholder="e.g. +91 9876543210">
         </div>
         
         <div class="mb-4">
@@ -26,4 +39,20 @@
         </div>
     </form>
 </div>
+
+<script>
+function toggleStaffFields() {
+    var roleSelect = document.getElementById("role");
+    var contactDiv = document.getElementById("staff-contact-div");
+    var contactInput = document.getElementById("contact");
+    
+    if (roleSelect.value === "staff") {
+        contactDiv.classList.remove("d-none");
+        contactInput.setAttribute("required", "required");
+    } else {
+        contactDiv.classList.add("d-none");
+        contactInput.removeAttribute("required");
+    }
+}
+</script>
 {% endblock %}

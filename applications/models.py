@@ -11,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     role = db.Column(db.String(20), nullable=False, default='trekker')  
     is_blacklisted = db.Column(db.Boolean, default=False, nullable=False)
+    is_approved = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     

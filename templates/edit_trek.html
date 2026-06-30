@@ -29,7 +29,18 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-bold">Total Slots</label>
-                    <input type="number" class="form-control" name="slots" value="{{ trek.slots }}" required>
+                    <input type="number" class="form-control" name="slots" value="{{ trek.available_slots }}" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label small fw-bold">Assign Trek Guide / Staff</label>
+                    <select class="form-select form-control" name="staff_id">
+                        <option value="">-- Keep Unassigned --</option>
+                        {% for s in staff_profiles %}
+                            <option value="{{ s.id }}" {% if trek.staff_id == s.id %}selected{% endif %}>
+                                {{ s.user_identity.username }} (Contact: {{ s.contact_details if s.contact_details else 'N/A' }})
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="d-flex gap-2 mt-4">

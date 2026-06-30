@@ -44,6 +44,9 @@
                                 <option value="Approved" {% if t.status=='Approved' %}selected{% endif %}>Approved</option>
                                 <option value="Open" {% if t.status=='Open' %}selected{% endif %}>Open (Allow Bookings)</option>
                                 <option value="Closed" {% if t.status=='Closed' %}selected{% endif %}>Closed</option>
+                                <option value="Completed" {% if t.status=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Started" {% if t.status=='Started' %}selected{% endif %}>Started</option>
+                                
                             </select>
                         </div>
                         <div class="col-12 mt-3 d-flex justify-content-between">

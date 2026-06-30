@@ -85,26 +85,35 @@
 
         <div class="col-md-5">
             <div class="card p-4 border-0 shadow-sm" style="border-radius: 20px; background: rgba(240, 245, 241, 0.95); min-height: 100%;">
-                <h3 class="text-green fw-bold mb-3">Onboard Trek Staff</h3>
-                <form action="/admin/add_staff" method="POST">
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">Staff Username</label>
-                        <input type="text" class="form-control" name="username" required placeholder="e.g. guide_rahul">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">Email Address</label>
-                        <input type="email" class="form-control" name="email" required placeholder="rahul@trekking.com">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">Contact Number</label>
-                        <input type="text" class="form-control" name="contact" required placeholder="Contact info">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Temporary Password</label>
-                        <input type="password" class="form-control" name="password" required placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="btn btn-green w-100 rounded-pill fw-bold py-2 shadow-sm">Register Staff User</button>
-                </form>
+                <h3 class="text-green fw-bold mb-3">Pending Staff Approvals</h3>
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table table-hover align-middle bg-white rounded-3 overflow-hidden shadow-sm m-0">
+                        <thead class="bg-green text-white small">
+                            <tr>
+                                <th class="p-2">Username</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users if u.role == 'staff' and not u.is_approved %}
+                            <tr>
+                                <td class="p-2 fw-bold small">{{ u.username }}</td>
+                                <td class="small">{{ u.email }}</td>
+                                <td>
+                                    <form action="/admin/approve_staff/{{ u.id }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-success py-0 px-2 rounded-pill fw-bold" style="font-size: 0.75rem;">Approve</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center p-4 text-muted small">No pending approval requests.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -206,18 +215,22 @@
                             </span>
                         </td>
                         <td>
-                            {% if u.is_blacklisted %}
+                            {% if u.role == 'staff' and not u.is_approved %}
+                                <span class="badge bg-warning text-dark">PENDING APPROVAL</span>
+                            {% elif u.is_blacklisted %}
                                 <span class="badge bg-danger">BLACKLISTED</span>
                             {% else %}
                                 <span class="badge bg-success">ACTIVE</span>
                             {% endif %}
                         </td>
                         <td>
-                            <form action="/admin/toggle_blacklist/{{ u.id }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-sm {% if u.is_blacklisted %}btn-outline-success{% else %}btn-outline-danger{% endif %} px-3 fw-bold rounded-pill">
-                                    {% if u.is_blacklisted %}Activate{% else %}Blacklist{% endif %}
-                                </button>
-                            </form>
+                            <div class="d-flex gap-1">
+                                <form action="/admin/toggle_blacklist/{{ u.id }}" method="POST" style="display:inline; margin:0;">
+                                    <button type="submit" class="btn btn-sm {% if u.is_blacklisted %}btn-outline-success{% else %}btn-outline-danger{% endif %} px-3 fw-bold rounded-pill">
+                                        {% if u.is_blacklisted %}Activate{% else %}Blacklist{% endif %}
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% else %}
